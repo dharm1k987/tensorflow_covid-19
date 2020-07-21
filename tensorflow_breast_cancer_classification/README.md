@@ -1,0 +1,1 @@
+This notebook classifies whether a patient likely has breasts cancer (malignent), or doesn't (benign)

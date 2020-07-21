@@ -1,0 +1,1 @@
+This notebook attempts to match stock market data for a given stock and predict the future closing price.
