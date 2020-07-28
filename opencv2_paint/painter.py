@@ -16,10 +16,10 @@ cap.set(10, 150)
 # ]
 
 myColors = [
-    [113,64,70,136,255,255], # purple # orange
-    [128,99,131,179,255,255], # pink # purple
-    [94,136,43,107,255,255], # blue # green
-    [27,84,30,86,255,255] # green
+    [115,84,118,145,255,255], # purple # orange
+    [161,84,146,179,255,255], # pink # purple
+    [91,100,93,102,255,255], # blue # green
+    [70,100,93,88,255,255] # green
 ]
 
 myColorValues = [
@@ -42,6 +42,7 @@ def findColor(img, myColors, myColorValues):
         # print(lower, upper)
         # the mask should find the color that we want highlighted
         mask = cv2.inRange(imgHSV, lower, upper)
+        # cv2.imshow(str(lower[0]), mask)
         x,y = getContours(mask)
         cv2.circle(imgResult, (x,y), 10, myColorValues[count], cv2.FILLED)
         if x != 0 and y != 0:
