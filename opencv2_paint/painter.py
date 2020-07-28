@@ -65,17 +65,18 @@ def getContours(img):
             approx = cv2.approxPolyDP(cnt, 0.02*perimeter, closed=True)
             # create bounding box around shape
             x, y, w, h = cv2.boundingRect(approx)
-            # cv2.rectangle(imgResult, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv2.rectangle(imgResult, (x, y), (x+w, y+h), (0, 255, 0), 2)
     return x+w//2, y
 
 def drawOnCanvas(myPoints, myColorValues):
     # print("in here")
     for point in myPoints:
-        cv2.circle(imgResult, (point[0],point[1]), 10, myColorValues[point[2]], cv2.FILLED)
+        cv2.circle(imgResult, (point[0],point[1]), 5, myColorValues[point[2]], cv2.FILLED)
 
 
 while True:
     success, img = cap.read()
+    img = cv2.flip(img, 1)
     imgResult = img.copy()
 
     newPoints = findColor(img, myColors, myColorValues)
@@ -86,5 +87,14 @@ while True:
     if myPoints:
         drawOnCanvas(myPoints, myColorValues)
     cv2.imshow('Result', imgResult)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+
+    wait = cv2.waitKey(1)
+    if wait & 0xFF == ord('q'):
         break
+    elif wait & 0xFF == ord('c'):
+        print("in here")
+        myPoints = []
+        drawOnCanvas(myPoints, myColorValues)
+
+cv2.destroyAllWindows()
+cap.release()
