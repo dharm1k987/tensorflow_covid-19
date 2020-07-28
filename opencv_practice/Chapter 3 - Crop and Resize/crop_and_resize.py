@@ -9,6 +9,7 @@ print(img.shape)
 
 # define width first here
 imgResize = cv2.resize(img, (1000, 500))
+# height, width, channel -> 500, 1000, 3
 print(imgResize.shape)
 
 imgCropped = img[0:200, 200:500] # 200 height, 300 width
