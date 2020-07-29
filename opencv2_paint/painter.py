@@ -7,6 +7,7 @@ def stackImages(scale, imgArray):
     rows = len(imgArray)
     cols = len(imgArray[0])
     rowsAvailable = isinstance(imgArray[0], list)
+
     width = imgArray[0][0].shape[1]
     height = imgArray[0][0].shape[0]
     if rowsAvailable:
@@ -42,7 +43,7 @@ def hsvToBGR(hsvColor):
 
 
 # function to find the color of the marker given the image and return the set of points to add
-def findColor(img, markerColors, colorToShow, imgResult):
+def findColor(img, markerColors, colorToShow, imgResult, pointSize):
     # convert image to HSV format
     imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     newPoints = []
@@ -62,7 +63,7 @@ def findColor(img, markerColors, colorToShow, imgResult):
         if x != 0 and y != 0:
             # add the x and y position along with the color id
             # with multiple markers on screen at once, this will have more than one item
-            newPoints.append([x + w // 2, y, i])
+            newPoints.append([x + w // 2, y, pointSize, i])
     return newPoints
 
 
@@ -88,11 +89,12 @@ def getContours(img, imgResult):
     return x, y, w, h
 
 
-# given a set of points [[x,y,colorId], [..], ...], draw circles on screen with the x,y and the color
+# given a set of points [[x,y,pointSize, colorId], [..], ...], draw circles on screen with the x,y and the color
 def drawOnCanvas(points, myColorValues, imgResult):
     for point in points:
         if point[0] != 0 and point[1] != 0:
-            cv2.circle(imgResult, (point[0], point[1]), 10, myColorValues[point[2]], cv2.FILLED)
+            cv2.circle(imgResult, (point[0], point[1]), point[2], myColorValues[point[3]], cv2.FILLED)
+    cv2.putText(imgResult, 'Size: {}'.format(pointSize), (20, 30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 128, 255), 3)
 
 
 # webcam setup
@@ -118,6 +120,7 @@ colorToShow = [np.array(hsvToBGR([a, b + bgrShift, c + bgrShift])).tolist() for 
 
 # will store the points that the marker takes on screen
 points = []  # [[x,y,colorId], [..], ...]
+pointSize = 10
 
 while True:
     # read the current image, and flip it so its easy to paint
@@ -127,7 +130,7 @@ while True:
     imgResult = img.copy()
 
     # get the set of new points to add
-    newPoints = findColor(img, markerColors, colorToShow, imgResult)
+    newPoints = findColor(img, markerColors, colorToShow, imgResult, pointSize)
 
     # we have to extend the original points (not append), since newPoints is a list itself
     points.extend(newPoints)
@@ -145,6 +148,14 @@ while True:
         # clear the screen
         points = []
         drawOnCanvas(points, colorToShow, imgResult)
+    elif wait & 0xFF == ord('['):
+        pointSize -= 1
+        if pointSize < 10:
+            pointSize = 10
+    elif wait & 0xFF == ord(']'):
+        pointSize += 1
+        if pointSize > 50:
+            pointSize = 50
 
 cv2.destroyAllWindows()
 cap.release()
