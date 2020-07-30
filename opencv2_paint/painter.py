@@ -57,10 +57,11 @@ def findColor(img, markerColors, colorToShow, imgResult, pointSize):
         mask = cv2.inRange(imgHSV, lower, upper)
         # get the contours for this mask, which represent the marker lid
         x, y, w, h = getContours(mask, imgResult)
-        # create a circle around the top center point
-        cv2.circle(imgResult, (x + w // 2, y), 15, colorToShow[i], cv2.FILLED)
+
         # if it was a valid contour, then add the points
         if x != 0 and y != 0:
+            # create a circle around the top center point
+            cv2.circle(imgResult, (x + w // 2, y), 15, colorToShow[i], cv2.FILLED)
             # add the x and y position along with the color id
             # with multiple markers on screen at once, this will have more than one item
             newPoints.append([x + w // 2, y, pointSize, i])
@@ -108,7 +109,7 @@ cap.set(10, brightness)
 
 # HSV low to high of the marker colors
 markerColors = [
-    [115, 84, 118, 145, 255, 255],  # purple
+    [110, 52, 64, 135, 255, 255],  # purple
     [161, 84, 146, 179, 255, 255],  # pink
     [91, 100, 93, 102, 255, 255],  # blue
     [70, 100, 93, 88, 255, 255]  # green
@@ -119,7 +120,7 @@ bgrShift = 70
 colorToShow = [np.array(hsvToBGR([a, b + bgrShift, c + bgrShift])).tolist() for a, b, c, _, _, _ in markerColors]
 
 # will store the points that the marker takes on screen
-points = []  # [[x,y,colorId], [..], ...]
+points = []  # [[x,y,pointSize, colorId], [..], ...]
 pointSize = 10
 
 while True:
